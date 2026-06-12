@@ -78,12 +78,12 @@ The experimental pipeline follows the paper settings:
 ## 🩻 Qualitative Results
 
 <p align="center">
-  <img src="examples/qualitative_drive-1.png" alt="DRIVE qualitative results" width="96%">
+  <img src="examples/qualitative_drive-1.png" alt="DRIVE qualitative results" width="66%">
 </p>
 <p align="center"><b>Figure 3.</b> Qualitative vessel segmentation results on DRIVE.</p>
 
 <p align="center">
-  <img src="examples/qualitative_chasedb1-1.png" alt="CHASEDB1 qualitative results" width="96%">
+  <img src="examples/qualitative_chasedb1-1.png" alt="CHASEDB1 qualitative results" width="66%">
 </p>
 <p align="center"><b>Figure 4.</b> Qualitative vessel segmentation results on CHASEDB1.</p>
 
