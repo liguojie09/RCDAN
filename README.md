@@ -173,7 +173,7 @@ Default training settings match the paper: Adam optimizer, learning rate `1e-4`,
 
 ### Evaluation
 
-Pretrained checkpoints are not included in this public repository. Put checkpoints under `weights/` manually before evaluation.
+Pretrained checkpoints are provided under `weights/` via Git LFS.
 
 ```bash
 python test.py --dataset dataset/DRIVE --weights weights/rcdan_drive.pth
@@ -190,14 +190,18 @@ python predict.py --image examples/sample.png --weights weights/rcdan_drive.pth 
 
 ## 📦 Weights
 
-This repository releases the source code only. Pretrained checkpoints are not included in the GitHub repository.
-
-If you have trained or obtained checkpoints, place them as:
+Pretrained checkpoints are tracked with Git LFS:
 
 ```text
 weights/
   rcdan_drive.pth
   rcdan_chasedb1.pth
+```
+
+If the files are not downloaded automatically after cloning, run:
+
+```bash
+git lfs pull
 ```
 
 ---
@@ -207,7 +211,7 @@ weights/
 - [x] Release RCDAN model code
 - [x] Release preprocessing, training, testing, and prediction scripts
 - [x] Provide paper-aligned default training settings
-- [ ] Add pretrained checkpoints or external download links
+- [x] Add pretrained checkpoints via Git LFS
 - [ ] Add demo visualization scripts
 
 ---

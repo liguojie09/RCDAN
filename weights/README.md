@@ -1,11 +1,15 @@
 # Weights
 
-Pretrained checkpoints are not included in this public code release.
-
-Place checkpoints here manually when running evaluation or prediction, for example:
+Pretrained RCDAN checkpoints are provided via Git LFS:
 
 ```text
 weights/
   rcdan_drive.pth
   rcdan_chasedb1.pth
+```
+
+If the checkpoint files are not present after cloning, run:
+
+```bash
+git lfs pull
 ```
