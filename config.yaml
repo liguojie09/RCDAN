@@ -1,0 +1,15 @@
+dataset: dataset/DRIVE
+weights: weights/rcdan_drive.pth
+output_dir: runs/rcdan
+in_channels: 1
+num_classes: 1
+base_c: 64
+batch_size: 4
+epochs: 200
+lr: 0.0001
+weight_decay: 0.0001
+threshold: 0.5
+num_workers: 0
+seed: 42
+patch_size: 224
+stride: 112
