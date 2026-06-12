@@ -31,7 +31,6 @@ The model integrates three core components:
 
 - 🔹 **Unified Multi-scale Attention:** UA computes shared attention weights across encoder features to improve cross-scale vessel representation.
 
-- 🔹 **Real-time Inference:** RCDAN reaches **215.30 FPS** with **10.82M parameters** and **178.50 MB** peak GPU memory under FP32, batch size 1, input size 224x224, on RTX 3090.
 
 ---
 
