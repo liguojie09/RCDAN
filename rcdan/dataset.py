@@ -4,7 +4,6 @@ import random
 
 import numpy as np
 import torch
-import torchvision.transforms as T
 from torch.utils.data import Dataset
 
 
@@ -14,7 +13,7 @@ class FixRandomRotation:
 
     def __call__(self, tensor):
         angle = random.choice(self.angles)
-        return T.functional.rotate(tensor, angle)
+        return torch.rot90(tensor, k=angle // 90, dims=(-2, -1))
 
 
 class GammaCorrection:
@@ -34,7 +33,7 @@ class CutMix:
         if random.random() > self.prob:
             return img1, gt1
         lam = np.random.beta(self.beta, self.beta)
-        _, height, width = img1.unsqueeze(0).shape
+        _, height, width = img1.shape
         cut_ratio = np.sqrt(1.0 - lam)
         cut_w = int(width * cut_ratio)
         cut_h = int(height * cut_ratio)
@@ -65,16 +64,8 @@ class VesselDataset(Dataset):
             self.img_files = full_image_files
         self.augment = augment and mode == "training"
         self.cutmix = CutMix(beta=1.0, prob=0.5)
-        self.joint_transform = T.Compose([
-            T.RandomHorizontalFlip(p=0.5),
-            T.RandomVerticalFlip(p=0.5),
-            FixRandomRotation(),
-        ])
-        self.image_transform = T.Compose([
-            T.ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2)),
-            T.GaussianBlur(kernel_size=(5, 5), sigma=(0.1, 2.0)),
-            GammaCorrection(gamma=1.3),
-        ])
+        self.rotation = FixRandomRotation()
+        self.gamma = GammaCorrection(gamma=1.3)
 
     def __len__(self):
         return len(self.img_files)
@@ -99,8 +90,33 @@ class VesselDataset(Dataset):
             img2 = self._load_tensor(img2_name)
             gt2 = self._load_tensor("gt" + img2_name[3:])
             img, gt = self.cutmix(img, gt, img2, gt2)
-            combined = self.joint_transform(torch.cat([img, gt], dim=0))
+            combined = self._joint_transform(torch.cat([img, gt], dim=0))
             img, gt = combined[:1], combined[1:2]
-            img = self.image_transform(img)
+            img = self._image_transform(img)
 
         return img, gt
+
+    def _joint_transform(self, tensor):
+        if random.random() < 0.5:
+            tensor = torch.flip(tensor, dims=(-1,))
+        if random.random() < 0.5:
+            tensor = torch.flip(tensor, dims=(-2,))
+        return self.rotation(tensor)
+
+    def _image_transform(self, img):
+        brightness = random.uniform(0.8, 1.2)
+        contrast = random.uniform(0.8, 1.2)
+        img = img * brightness
+        img = (img - img.mean()) * contrast + img.mean()
+        img = img.clamp(0, 1)
+        if random.random() < 0.5:
+            img = self._gaussian_blur(img)
+        return self.gamma(img).clamp(0, 1)
+
+    @staticmethod
+    def _gaussian_blur(img):
+        kernel = torch.tensor([1, 4, 6, 4, 1], dtype=img.dtype, device=img.device)
+        kernel = kernel[:, None] @ kernel[None, :]
+        kernel = kernel / kernel.sum()
+        kernel = kernel.view(1, 1, 5, 5)
+        return torch.nn.functional.conv2d(img.unsqueeze(0), kernel, padding=2).squeeze(0)

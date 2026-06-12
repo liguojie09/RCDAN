@@ -1,6 +1,17 @@
 import numpy as np
 import torch
-from sklearn.metrics import roc_auc_score
+
+
+def binary_auc_score(target, scores):
+    order = np.argsort(scores)
+    ranks = np.empty_like(order, dtype=np.float64)
+    ranks[order] = np.arange(1, len(scores) + 1)
+    pos = target == 1
+    n_pos = float(pos.sum())
+    n_neg = float(len(target) - pos.sum())
+    if n_pos == 0 or n_neg == 0:
+        return float("nan")
+    return float((ranks[pos].sum() - n_pos * (n_pos + 1) / 2) / (n_pos * n_neg))
 
 
 def segmentation_metrics(logits, target, threshold=0.5):
@@ -14,7 +25,7 @@ def segmentation_metrics(logits, target, threshold=0.5):
     fn = np.logical_and(pred == 0, gt == 1).sum()
 
     eps = 1e-8
-    auc = roc_auc_score(gt, prob) if len(np.unique(gt)) > 1 else float("nan")
+    auc = binary_auc_score(gt, prob)
     precision = tp / (tp + fp + eps)
     recall = tp / (tp + fn + eps)
     specificity = tn / (tn + fp + eps)

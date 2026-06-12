@@ -4,17 +4,18 @@ import os
 import cv2
 import numpy as np
 import torch
-from PIL import Image
 
 from rcdan import RCDAN
 from rcdan.checkpoint import load_checkpoint
 
 
 def load_grayscale_image(path):
-    image = Image.open(path).convert("L")
-    array = np.asarray(image, dtype=np.float32) / 255.0
+    array = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    if array is None:
+        raise FileNotFoundError(f"Could not read image: {path}")
+    array = array.astype(np.float32) / 255.0
     tensor = torch.from_numpy(array).unsqueeze(0).unsqueeze(0)
-    return tensor, image.size
+    return tensor, array.shape[::-1]
 
 
 def main():
