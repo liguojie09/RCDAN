@@ -62,9 +62,9 @@ The experimental pipeline follows the paper settings:
 
 ### Efficiency
 
-| Params (M) | FLOPs (G) | Peak Memory (MB) | FPS | Time (ms) |
-|:--:|:--:|:--:|:--:|:--:|
-| 10.82 | 22.70 | 178.50 | 215.30 | 4.64 |
+| Params (M) | FLOPs (G) | 
+|:--:|:--:|
+| 10.82 | 22.70 |
 
 ### Cross-dataset Generalization on STARE
 
